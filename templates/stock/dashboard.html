@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tableau de Bord - Gestion de Stock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</h1>
+</div>
+
+<!-- Cartes de statistiques -->
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Produits
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ total_produits }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Valeur Stock Total
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ valeur_totale_stock|floatformat:2 }} €
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-euro-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Fournisseurs
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ total_fournisseurs }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-truck fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Mouvements (7j)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ mouvements_entree|add:mouvements_sortie }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exchange-alt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Alertes Stock Faible -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-exclamation-triangle"></i> Alertes Stock
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if produits_stock_faible %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Stock Actuel</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produit in produits_stock_faible %}
+                                <tr class="{% if produit.statut_stock == 'rupture' %}table-danger{% else %}table-warning{% endif %}">
+                                    <td>{{ produit.nom }}</td>
+                                    <td>{{ produit.quantite_stock }}</td>
+                                    <td>
+                                        {% if produit.statut_stock == 'rupture' %}
+                                            <span class="badge bg-danger">Rupture</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Faible</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-success">
+                        <i class="fas fa-check-circle"></i> Aucune alerte de stock
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Mouvements Récents -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-history"></i> Mouvements Récents
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if mouvements_recents %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Type</th>
+                                    <th>Quantité</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mouvement in mouvements_recents %}
+                                <tr>
+                                    <td>{{ mouvement.produit.nom }}</td>
+                                    <td>
+                                        {% if mouvement.type_mouvement == 'entree' %}
+                                            <span class="badge bg-success">Entrée</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Sortie</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ mouvement.quantite }}</td>
+                                    <td>{{ mouvement.date_mouvement|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucun mouvement récent</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions Rapides -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-bolt"></i> Actions Rapides
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'stock:mouvement_stock' %}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus-circle"></i><br>
+                            Entrée Stock
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'stock:mouvement_stock' %}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-minus-circle"></i><br>
+                            Sortie Stock
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'stock:liste_produits' %}" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-list"></i><br>
+                            Voir Produits
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/admin/stock/produit/add/" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-plus"></i><br>
+                            Nouveau Produit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

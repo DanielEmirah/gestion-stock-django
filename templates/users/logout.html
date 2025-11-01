@@ -1,0 +1,29 @@
+<!-- templates/users/logout.html -->
+{% extends 'base.html' %}
+
+{% block title %}Déconnexion - Gestion de Stock{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="fas fa-sign-out-alt"></i> Déconnexion</h4>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle fa-4x text-success"></i>
+                </div>
+                <h5>Vous avez été déconnecté avec succès</h5>
+                <p class="text-muted">Merci d'avoir utilisé notre système de gestion de stock.</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Se reconnecter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

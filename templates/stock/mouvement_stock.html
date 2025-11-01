@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Mouvement de Stock - Gestion de Stock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-exchange-alt"></i> Mouvement de Stock</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Enregistrer un mouvement</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="produit" class="form-label">Produit *</label>
+                                <select name="produit" id="produit" class="form-select" required>
+                                    <option value="">Sélectionnez un produit</option>
+                                    {% for produit in produits %}
+                                    <option value="{{ produit.id }}" 
+                                            {% if produit_selectionne and produit_selectionne.id == produit.id %}selected{% endif %}>
+                                        {{ produit.nom }} (Stock: {{ produit.quantite_stock }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type_mouvement" class="form-label">Type de mouvement *</label>
+                                <select name="type_mouvement" id="type_mouvement" class="form-select" required>
+                                    <option value="entree">Entrée en stock</option>
+                                    <option value="sortie">Sortie de stock</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantite" class="form-label">Quantité *</label>
+                                <input type="number" name="quantite" id="quantite" 
+                                       class="form-control" min="1" required 
+                                       placeholder="Entrez la quantité">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes (optionnel)</label>
+                        <textarea name="notes" id="notes" class="form-control" 
+                                  rows="3" placeholder="Raison du mouvement, commentaires..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Information:</strong> Les mouvements de stock sont enregistrés immédiatement 
+                        et affectent le stock disponible du produit.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Enregistrer le mouvement
+                    </button>
+                    <a href="{% url 'stock:liste_produits' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Information produit sélectionné -->
+        {% if produit_selectionne %}
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">Information Produit</h6>
+            </div>
+            <div class="card-body">
+                <h6>{{ produit_selectionne.nom }}</h6>
+                <p class="mb-1"><strong>Stock actuel:</strong> {{ produit_selectionne.quantite_stock }}</p>
+                <p class="mb-1"><strong>Prix d'achat:</strong> {{ produit_selectionne.prix_achat }} €</p>
+                <p class="mb-1"><strong>Prix de vente:</strong> {{ produit_selectionne.prix_vente }} €</p>
+                <p class="mb-0"><strong>Statut:</strong> 
+                    {% if produit_selectionne.statut_stock == 'normal' %}
+                        <span class="badge bg-success">Normal</span>
+                    {% elif produit_selectionne.statut_stock == 'faible' %}
+                        <span class="badge bg-warning">Faible</span>
+                    {% else %}
+                        <span class="badge bg-danger">Rupture</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Aide -->
+        <div class="card mt-3">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">Types de mouvement</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Entrée en stock:</strong></p>
+                <ul class="small">
+                    <li>Nouvelle livraison</li>
+                    <li>Retour client</li>
+                    <li>Inventaire positif</li>
+                </ul>
+                
+                <p><strong>Sortie de stock:</strong></p>
+                <ul class="small">
+                    <li>Vente à un client</li>
+                    <li>Utilisation interne</li>
+                    <li>Inventaire négatif</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mise à jour dynamique des informations produit
+    const produitSelect = document.getElementById('produit');
+    const typeMouvementSelect = document.getElementById('type_mouvement');
+    
+    // Pourrait être étendu pour récupérer les infos produit via AJAX
+});
+</script>
+{% endblock %}
