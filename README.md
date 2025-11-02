@@ -29,7 +29,7 @@ Une application web complète de gestion de stock développée avec Django, Boot
 
 ```bash
 # Cloner le projet
-git clone https://github.com/VOTRE_NOM_UTILISATEUR/gestion-stock-django.git](https://github.com/DanielEmirah/gestion-stock-django.git
+git clone https://github.com/DanielEmirah/gestion-stock-django.git
 cd gestion-stock-django
 
 # Créer l'environnement virtuel
