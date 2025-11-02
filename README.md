@@ -1,6 +1,6 @@
 # 🏪 Gestion de Stock - Application Django
 
-Une application web complète de gestion de stock développée avec Django, Bootstrap 5 et SQLite/PostgreSQL.
+Une application web complète de gestion de stock développée avec Django, Bootstrap 5 et SQLite.
 
 ## 🚀 Fonctionnalités
 
